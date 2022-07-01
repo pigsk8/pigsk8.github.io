@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <script>
+        console.log("hola");
+
+        fetch('https://login.microsoft.com/8c570e24-8b29-4ae8-97f9-9710b07a480b/oauth2/v2.0/token', {
+        method: "POST",
+        headers: {
+            "Content-type": "application/x-www-form-urlencoded",
+            "Access-Control-Allow-Origin": "*"
+        },
+        body: "grant_type=client_credentials&client_secret=doo8Q~ShCr4GgyaAvUO~3OODAe.Uh7XLqy65jcIB&scope=https://suramexicob2capimarketdev.onmicrosoft.com/3e976fe5-daa9-40ac-bd42-3bb788f05826/.default&client_id=3e976fe5-daa9-40ac-bd42-3bb788f05826"
+        })
+        .then(response => response.json()) 
+            .then(json => console.log(json))
+            .catch(err => console.log('Solicitud fallida', err));
+    </script>
+</body>
+
+</html>

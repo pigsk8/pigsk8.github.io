@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css"
+        integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+</head>
+
+<body>
+    <form id="form-checkout">
+        <input type="text" name="cardNumber" id="form-checkout__cardNumber" />
+        <input type="text" name="expirationDate" id="form-checkout__expirationDate" />
+        <input type="text" name="cardholderName" id="form-checkout__cardholderName" />
+        <input type="email" name="cardholderEmail" id="form-checkout__cardholderEmail" />
+        <input type="text" name="securityCode" id="form-checkout__securityCode" />
+        <select name="issuer" id="form-checkout__issuer"></select>
+        <select name="installments" id="form-checkout__installments"></select>
+        <button type="submit" id="form-checkout__submit">Pagar</button>
+        <progress value="0" class="progress-bar">Cargando...</progress>
+    </form>
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
+    <script>
+        const mp = new MercadoPago('APP_USR-e8cb10cd-0553-4268-a8fc-2f4d319e44fb');
+        // Step #3
+        const cardForm = mp.cardForm({
+            amount: "100.5",
+            autoMount: true,
+            form: {
+                id: "form-checkout",
+                cardholderName: {
+                    id: "form-checkout__cardholderName",
+                    placeholder: "Titular de la tarjeta",
+                },
+                cardholderEmail: {
+                    id: "form-checkout__cardholderEmail",
+                    placeholder: "E-mail",
+                },
+                cardNumber: {
+                    id: "form-checkout__cardNumber",
+                    placeholder: "Número de la tarjeta",
+                },
+                expirationDate: {
+                    id: "form-checkout__expirationDate",
+                    placeholder: "Fecha de vencimiento (MM/YYYY)",
+                },
+                securityCode: {
+                    id: "form-checkout__securityCode",
+                    placeholder: "Código de seguridad",
+                },
+                installments: {
+                    id: "form-checkout__installments",
+                    placeholder: "Cuotas",
+                },
+                issuer: {
+                    id: "form-checkout__issuer",
+                    placeholder: "Banco emisor",
+                },
+            },
+            callbacks: {
+                onFormMounted: error => {
+                    if (error) return console.warn("Form Mounted handling error: ", error);
+                    console.log("Form mounted");
+                },
+                onSubmit: event => {
+                    event.preventDefault();
+                    const {
+                        paymentMethodId,
+                        issuerId,
+                        cardholderEmail: email,
+                        amount,
+                        token,
+                        installments
+                    } = cardForm.getCardFormData();
+                    console.log(paymentMethodId);
+                    console.log(issuerId);
+                    console.log(email);
+                    console.log(amount);
+                    console.log(token);
+                    console.log(installments);
+                    let reference = "kjwdw72hbdjd";
+                    // fetch("http://localhost:3000/api-mercadopago/payments", {
+                    //     method: "POST",
+                    //     headers: {
+                    //         "Content-Type": "application/json",
+                    //     },
+                    //     body: JSON.stringify({
+                    //         token,
+                    //         issuerId,
+                    //         paymentMethodId,
+                    //         amount: Number(amount),
+                    //         installments: Number(installments),
+                    //         description: "Descripción del producto",
+                    //         email,
+                    //         reference
+                    //     }),
+                    // });
+                },
+                onFetching: (resource) => {
+                    console.log("Fetching resource: ", resource);
+                    // Animate progress bar
+                    const progressBar = document.querySelector(".progress-bar");
+                    progressBar.removeAttribute("value");
+                    return () => {
+                        progressBar.setAttribute("value", "0");
+                    };
+                }
+            },
+        });
+    </script>
+</body>
+</html>
